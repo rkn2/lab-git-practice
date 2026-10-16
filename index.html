@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maple Hollow Windstorm Survey</title>
+  <style>
+    body {
+      font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      margin: 0;
+      background: #f6f7f9;
+      color: #1f2328;
+    }
+    main {
+      max-width: 820px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+    h1 { margin-bottom: 4px; }
+    .note { color: #59636e; margin-top: 0; }
+    #count { font-weight: 600; margin: 24px 0 8px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid #d1d9e0;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e5e8eb;
+    }
+    th { background: #eef1f4; }
+    .damage-none     { color: #1a7f37; }
+    .damage-minor    { color: #9a6700; }
+    .damage-moderate { color: #bc4c00; }
+    .damage-severe   { color: #cf222e; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Maple Hollow Windstorm Survey</h1>
+    <p class="note">Buildings surveyed after the 2026 windstorm in Maple Hollow, PA. All data is made up for practice.</p>
+    <p id="count">Loading...</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Address</th>
+          <th>Year built</th>
+          <th>Construction</th>
+          <th>Stories</th>
+          <th>Damage</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </main>
+
+  <script>
+    // Read buildings.csv and turn each line into a table row.
+    fetch("buildings.csv")
+      .then(function (response) { return response.text(); })
+      .then(function (text) {
+        var lines = text.trim().split("\n").slice(1); // skip the header line
+        var tbody = document.getElementById("rows");
+        lines.forEach(function (line) {
+          var cells = line.split(",");
+          var tr = document.createElement("tr");
+          cells.forEach(function (value, i) {
+            var td = document.createElement("td");
+            td.textContent = value;
+            if (i === 4) { td.className = "damage-" + value.trim(); }
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        document.getElementById("count").textContent = lines.length + " buildings surveyed";
+      })
+      .catch(function () {
+        document.getElementById("count").textContent =
+          "Could not load buildings.csv. Are you running python3 -m http.server?";
+      });
+  </script>
+</body>
+</html>
